@@ -1,5 +1,7 @@
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -21,16 +23,21 @@ public class Piece {
     }
 
     public BufferedImage getImage(String imagePath) {
-        BufferedImage image = null;
+    String fullPath = imagePath + ".png";
+    System.out.println("Trying to load: " + fullPath);  // Debug
 
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-        
-        }catch(IOException e) {
-            e.printStackTrace();
+    try {
+        InputStream stream = getClass().getResourceAsStream(fullPath);
+        if (stream == null) {
+            System.err.println("ERROR: Resource not found: " + fullPath);
+            return null;
         }
-        return image;
+        return ImageIO.read(stream);
+    } catch (IOException e) {
+        e.printStackTrace();
+        return null;
     }
+}
 
     public int getX(int col) {
         return col * Board.SQUARE_SIZE;
@@ -38,6 +45,10 @@ public class Piece {
 
     public int getY(int row) { 
         return row * Board.SQUARE_SIZE;
+    }
+    
+    public void draw(Graphics2D g2) {
+        g2.drawImage(image, x, y, Board.SQUARE_SIZE, Board.SQUARE_SIZE, null);
     }
 
 }
